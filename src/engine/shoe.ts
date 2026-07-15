@@ -66,9 +66,9 @@ export class Shoe {
     this.revealed[bucketOf(rank)]++;
   }
 
+  /** True once the cut card (fixed `cutCardDepth` cards from the back) has been reached. */
   needsReshuffle(): boolean {
-    const dealtFraction = this.nextIndex / this.cards.length;
-    return dealtFraction >= this.rules.penetration;
+    return this.remainingCount() <= this.rules.cutCardDepth;
   }
 
   remainingCount(): number {
@@ -77,6 +77,11 @@ export class Shoe {
 
   totalSize(): number {
     return this.cards.length;
+  }
+
+  /** How many more cards can be dealt before the cut card is reached. */
+  cardsUntilCutCard(): number {
+    return Math.max(0, this.remainingCount() - this.rules.cutCardDepth);
   }
 
   /** Fresh shoe composition minus everything revealed to the player so far this shoe. */

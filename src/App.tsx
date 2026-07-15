@@ -45,7 +45,7 @@ function App() {
       )}
 
       <div className="shoe-info">
-        Shoe: {game.shoeRemaining}/{game.shoeTotal} cards remaining
+        Shoe: {game.shoeRemaining}/{game.shoeTotal} cards remaining · {game.cardsUntilCutCard} until cut card
       </div>
     </div>
   );

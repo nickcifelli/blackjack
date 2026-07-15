@@ -12,8 +12,8 @@ export interface RuleConfig {
   allowSplitAnyTenValue: boolean;
   /** Only legal as the very first action on an original, unsplit two-card hand. */
   lateSurrenderAllowed: boolean;
-  /** Fraction of the shoe dealt before a reshuffle is triggered. */
-  penetration: number;
+  /** Cards left in the shoe when the cut card is reached; a reshuffle is triggered once this few (or fewer) cards remain. */
+  cutCardDepth: number;
 }
 
 export const DEFAULT_RULES: RuleConfig = {
@@ -27,5 +27,5 @@ export const DEFAULT_RULES: RuleConfig = {
   splitAcesOneCardOnly: true,
   allowSplitAnyTenValue: true,
   lateSurrenderAllowed: true,
-  penetration: 0.75,
+  cutCardDepth: 50,
 };

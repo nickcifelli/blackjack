@@ -123,6 +123,7 @@ export function useGame(rules: RuleConfig = DEFAULT_RULES) {
     summary: round.summary,
     shoeRemaining: round.shoe.remainingCount(),
     shoeTotal: round.shoe.totalSize(),
+    cardsUntilCutCard: round.shoe.cardsUntilCutCard(),
     evaluating,
     canChoose: pendingResults !== null,
     feedback,

@@ -25,14 +25,16 @@ describe('Shoe', () => {
     expect(shoe.remainingCount()).toBe(311);
   });
 
-  it('signals a reshuffle once the penetration threshold is crossed', () => {
-    const rules = { ...DEFAULT_RULES, penetration: 0.5 };
+  it('signals a reshuffle once the cut card is reached', () => {
+    const rules = { ...DEFAULT_RULES, cutCardDepth: 50 };
     const shoe = new Shoe(rules);
     const total = shoe.totalSize();
-    for (let i = 0; i < total * 0.5 - 1; i++) shoe.deal();
+    for (let i = 0; i < total - 51; i++) shoe.deal();
     expect(shoe.needsReshuffle()).toBe(false);
+    expect(shoe.cardsUntilCutCard()).toBe(1);
     shoe.deal();
     expect(shoe.needsReshuffle()).toBe(true);
+    expect(shoe.cardsUntilCutCard()).toBe(0);
   });
 
   it('resets composition tracking on reshuffle', () => {
