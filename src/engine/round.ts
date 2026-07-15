@@ -78,6 +78,11 @@ export class GameRound {
     return card;
   }
 
+  /** A hand at 21 or bust has no further legal actions; hitting from 21 can only bust. */
+  private finishIfComplete(hand: PlayerHand): void {
+    if (handValue(bucketsOf(hand)).total >= 21) hand.done = true;
+  }
+
   private revealHoleCard(): void {
     this.shoe.markRevealed(this.dealerHoleCard.rank);
     this.dealerCards.push(this.dealerHoleCard);
@@ -164,7 +169,7 @@ export class GameRound {
 
       case 'hit': {
         this.dealCardToPlayer(hand);
-        if (handValue(bucketsOf(hand)).bust) hand.done = true;
+        this.finishIfComplete(hand);
         break;
       }
 
@@ -185,6 +190,7 @@ export class GameRound {
         hand.isSplitAces = wasAces;
         this.dealCardToPlayer(hand);
         if (wasAces && this.rules.splitAcesOneCardOnly) hand.done = true;
+        else this.finishIfComplete(hand);
 
         const newHand = freshHand();
         newHand.cards = [cardB];
@@ -192,6 +198,7 @@ export class GameRound {
         newHand.isSplitAces = wasAces;
         this.dealCardToPlayer(newHand);
         if (wasAces && this.rules.splitAcesOneCardOnly) newHand.done = true;
+        else this.finishIfComplete(newHand);
 
         this.hands.splice(this.activeHandIndex + 1, 0, newHand);
         break;
