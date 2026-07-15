@@ -1,0 +1,224 @@
+.app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.app-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.app-header h1 {
+  font-size: 24px;
+  letter-spacing: -0.02em;
+}
+
+.session-stats {
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.table {
+  background: radial-gradient(ellipse at center, var(--felt) 0%, var(--felt-dark) 100%);
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-height: 280px;
+}
+
+.player-hands {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+}
+
+.hand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 10px;
+  transition: background-color 0.15s ease;
+}
+
+.hand-active {
+  background: rgba(212, 175, 55, 0.12);
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.4);
+}
+
+.hand-label {
+  font-size: 13px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.hand-cards {
+  display: flex;
+  gap: 6px;
+}
+
+.hand-total {
+  font-size: 14px;
+  min-height: 20px;
+}
+
+.hand-status {
+  font-weight: 600;
+}
+
+.card {
+  width: 48px;
+  height: 68px;
+  border-radius: 6px;
+  background: #fdfdfb;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+  line-height: 1.1;
+}
+
+.card-red {
+  color: #c0392b;
+}
+
+.card-black {
+  color: #1a1a1a;
+}
+
+.card-suit {
+  font-size: 18px;
+}
+
+.card-back {
+  background: repeating-linear-gradient(45deg, #24425a, #24425a 4px, #1a3245 4px, #1a3245 8px);
+  border: 1px solid var(--panel-border);
+}
+
+.decision-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.decision-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.evaluating {
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.btn {
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  color: var(--text);
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition:
+    transform 0.1s ease,
+    background-color 0.15s ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: #1a3245;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.btn-deal {
+  align-self: center;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.results-panel {
+  border-radius: 10px;
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.results-banner {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.results-panel.correct .results-banner {
+  color: var(--win);
+}
+
+.results-panel.incorrect .results-banner {
+  color: var(--loss);
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.results-table th,
+.results-table td {
+  text-align: right;
+  padding: 4px 8px;
+}
+
+.results-table th:first-child,
+.results-table td:first-child {
+  text-align: left;
+}
+
+.results-table thead th {
+  color: var(--text-dim);
+  font-weight: 500;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.results-table tr.user-pick {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.results-table tr.best-pick td {
+  color: var(--win);
+}
+
+.shoe-info {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 13px;
+}
