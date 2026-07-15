@@ -12,7 +12,12 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1>Blackjack Trainer</h1>
-        <SessionStats correct={game.sessionStats.correct} total={game.sessionStats.total} />
+        <div className="app-header-right">
+          <SessionStats correct={game.sessionStats.correct} total={game.sessionStats.total} />
+          <button type="button" className="btn btn-new-shoe" onClick={game.newShoe}>
+            New Shoe
+          </button>
+        </div>
       </header>
 
       <Table

@@ -25,6 +25,17 @@
   font-size: 14px;
 }
 
+.app-header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.btn-new-shoe {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
 .table {
   background: radial-gradient(ellipse at center, var(--felt) 0%, var(--felt-dark) 100%);
   border: 1px solid var(--panel-border);

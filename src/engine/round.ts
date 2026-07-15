@@ -127,6 +127,12 @@ export class GameRound {
     }
   }
 
+  /** Discards the current shoe, including any dealt-but-unseen cards, and deals a fresh round from a new one. */
+  newShoe(): void {
+    this.shoe.reshuffle();
+    this.deal();
+  }
+
   legalActions(handIndex: number = this.activeHandIndex): Action[] {
     const hand = this.hands[handIndex];
     if (!hand || hand.done) return [];

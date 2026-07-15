@@ -87,6 +87,13 @@ export function useGame(rules: RuleConfig = DEFAULT_RULES) {
     startEvaluationForCurrentDecision();
   }, [round, forceUpdate, startEvaluationForCurrentDecision]);
 
+  const newShoe = useCallback(() => {
+    round.newShoe();
+    setFeedback(null);
+    forceUpdate();
+    startEvaluationForCurrentDecision();
+  }, [round, forceUpdate, startEvaluationForCurrentDecision]);
+
   const choose = useCallback(
     (action: Action) => {
       if (!pendingResults) return;
@@ -122,5 +129,6 @@ export function useGame(rules: RuleConfig = DEFAULT_RULES) {
     sessionStats,
     choose,
     dealNext,
+    newShoe,
   };
 }
