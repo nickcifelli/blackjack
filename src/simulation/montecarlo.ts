@@ -84,13 +84,20 @@ function rolloutContinue(
   cards: BucketKey[],
   dealerUp: BucketKey,
   pool: Composition,
+  rules: RuleConfig,
   rng: () => number,
 ): BucketKey[] {
   let current = cards;
   for (;;) {
     const { bust, total } = handValue(current);
     if (bust || total >= 21) return current;
-    const action = basicStrategyAction({ cards: current, dealerUp, canDouble: false, canSplit: false });
+    const action = basicStrategyAction({
+      cards: current,
+      dealerUp,
+      canDouble: false,
+      canSplit: false,
+      dealerHitsSoft17: !rules.dealerStandsSoft17,
+    });
     if (action === 'S') return current;
     current = [...current, draw(pool, rng)];
   }
@@ -127,7 +134,13 @@ function resolveSplitHands(
       (cards[0] !== 'T' || rules.allowSplitAnyTenValue);
     const canDouble = rules.dasAllowed;
 
-    const action = basicStrategyAction({ cards, dealerUp, canDouble, canSplit: canSplitAgain });
+    const action = basicStrategyAction({
+      cards,
+      dealerUp,
+      canDouble,
+      canSplit: canSplitAgain,
+      dealerHitsSoft17: !rules.dealerStandsSoft17,
+    });
 
     if (action === 'P' && canSplitAgain) {
       handCounter.count += 1;
@@ -140,7 +153,7 @@ function resolveSplitHands(
       continue;
     }
 
-    results.push({ cards: rolloutContinue(cards, dealerUp, pool, rng), bet: 1 });
+    results.push({ cards: rolloutContinue(cards, dealerUp, pool, rules, rng), bet: 1 });
   }
 
   return results;
@@ -162,7 +175,7 @@ function simulateOneTrial(
   if (action === 'hit') {
     const cards = [...playerCards, draw(pool, rng)];
     if (handValue(cards).bust) return -1;
-    const finalCards = rolloutContinue(cards, dealerUp, pool, rng);
+    const finalCards = rolloutContinue(cards, dealerUp, pool, rules, rng);
     const dealer = playOutDealer(dealerUp, pool, rules, rng);
     return scoreHand(finalCards, 1, dealer.total, dealer.bust);
   }

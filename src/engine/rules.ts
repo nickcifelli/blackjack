@@ -21,11 +21,11 @@ export const DEFAULT_RULES: RuleConfig = {
   dealerStandsSoft17: true,
   blackjackPayout: 1.5,
   dealerPeeksForBlackjack: true,
-  dasAllowed: true,
+  dasAllowed: false,
   maxSplitHands: 4,
   resplitAcesAllowed: false,
   splitAcesOneCardOnly: true,
   allowSplitAnyTenValue: true,
-  lateSurrenderAllowed: true,
+  lateSurrenderAllowed: false,
   cutCardDepth: 50,
 };

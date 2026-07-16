@@ -115,8 +115,10 @@ export function useGame(rules: RuleConfig = DEFAULT_RULES) {
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const dealNext = useCallback(() => {
-    round.deal();
+  // Shared by every action that leaves the round mid-transition (dealing a new hand, reshuffling,
+  // or changing a rule): clears stale feedback, re-syncs the dealer reveal animation to the round's
+  // new phase, and kicks off evaluation of whatever decision (if any) now needs one.
+  const syncAfterRoundChange = useCallback(() => {
     setFeedback(null);
     if (round.phase === 'round-over') {
       revealDealerCardsProgressively(1, round.dealerCards.length);
@@ -128,18 +130,39 @@ export function useGame(rules: RuleConfig = DEFAULT_RULES) {
     startEvaluationForCurrentDecision();
   }, [round, forceUpdate, startEvaluationForCurrentDecision, revealDealerCardsProgressively, clearRevealTimer]);
 
+  const dealNext = useCallback(() => {
+    round.deal();
+    syncAfterRoundChange();
+  }, [round, syncAfterRoundChange]);
+
   const newShoe = useCallback(() => {
     round.newShoe();
-    setFeedback(null);
-    if (round.phase === 'round-over') {
-      revealDealerCardsProgressively(1, round.dealerCards.length);
-    } else {
-      clearRevealTimer();
-      setDealerRevealCount(1);
-    }
-    forceUpdate();
-    startEvaluationForCurrentDecision();
-  }, [round, forceUpdate, startEvaluationForCurrentDecision, revealDealerCardsProgressively, clearRevealTimer]);
+    syncAfterRoundChange();
+  }, [round, syncAfterRoundChange]);
+
+  const setDealerStandsSoft17 = useCallback(
+    (standsSoft17: boolean) => {
+      round.setDealerStandsSoft17(standsSoft17);
+      syncAfterRoundChange();
+    },
+    [round, syncAfterRoundChange],
+  );
+
+  const setDasAllowed = useCallback(
+    (dasAllowed: boolean) => {
+      round.setDasAllowed(dasAllowed);
+      syncAfterRoundChange();
+    },
+    [round, syncAfterRoundChange],
+  );
+
+  const setLateSurrenderAllowed = useCallback(
+    (lateSurrenderAllowed: boolean) => {
+      round.setLateSurrenderAllowed(lateSurrenderAllowed);
+      syncAfterRoundChange();
+    },
+    [round, syncAfterRoundChange],
+  );
 
   const choose = useCallback(
     (action: Action) => {
@@ -180,8 +203,14 @@ export function useGame(rules: RuleConfig = DEFAULT_RULES) {
     canChoose: pendingResults !== null,
     feedback,
     sessionStats,
+    dealerStandsSoft17: round.rules.dealerStandsSoft17,
+    dasAllowed: round.rules.dasAllowed,
+    lateSurrenderAllowed: round.rules.lateSurrenderAllowed,
     choose,
     dealNext,
     newShoe,
+    setDealerStandsSoft17,
+    setDasAllowed,
+    setLateSurrenderAllowed,
   };
 }

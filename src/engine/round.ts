@@ -134,6 +134,24 @@ export class GameRound {
     this.deal();
   }
 
+  /** Changes whether the dealer hits or stands on soft 17, then starts a fresh shoe under the new rule. */
+  setDealerStandsSoft17(standsSoft17: boolean): void {
+    this.rules.dealerStandsSoft17 = standsSoft17;
+    this.newShoe();
+  }
+
+  /** Changes whether doubling after a split is allowed, then starts a fresh shoe under the new rule. */
+  setDasAllowed(dasAllowed: boolean): void {
+    this.rules.dasAllowed = dasAllowed;
+    this.newShoe();
+  }
+
+  /** Changes whether late surrender is allowed, then starts a fresh shoe under the new rule. */
+  setLateSurrenderAllowed(lateSurrenderAllowed: boolean): void {
+    this.rules.lateSurrenderAllowed = lateSurrenderAllowed;
+    this.newShoe();
+  }
+
   legalActions(handIndex: number = this.activeHandIndex): Action[] {
     const hand = this.hands[handIndex];
     if (!hand || hand.done) return [];

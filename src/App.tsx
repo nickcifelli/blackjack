@@ -3,6 +3,7 @@ import { Table } from './ui/components/Table';
 import { DecisionButtons } from './ui/components/DecisionButtons';
 import { ResultsPanel } from './ui/components/ResultsPanel';
 import { SessionStats } from './ui/components/SessionStats';
+import { SettingsPanel } from './ui/components/SettingsPanel';
 import './App.css';
 
 function App() {
@@ -17,6 +18,14 @@ function App() {
           <button type="button" className="btn btn-new-shoe" onClick={game.newShoe}>
             New Shoe
           </button>
+          <SettingsPanel
+            dealerStandsSoft17={game.dealerStandsSoft17}
+            onDealerStandsSoft17Change={game.setDealerStandsSoft17}
+            dasAllowed={game.dasAllowed}
+            onDasAllowedChange={game.setDasAllowed}
+            lateSurrenderAllowed={game.lateSurrenderAllowed}
+            onLateSurrenderAllowedChange={game.setLateSurrenderAllowed}
+          />
         </div>
       </header>
 
