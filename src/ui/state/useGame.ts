@@ -19,7 +19,7 @@ function useForceUpdate() {
 }
 
 /** Real-time gap between the dealer's hole card flip and each subsequent hit, so the reveal doesn't snap in instantly. */
-const DEALER_REVEAL_INTERVAL_MS = 550;
+const DEALER_REVEAL_INTERVAL_MS = 900;
 
 export function useGame(rules: RuleConfig = DEFAULT_RULES) {
   const roundRef = useRef<GameRound | null>(null);

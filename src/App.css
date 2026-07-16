@@ -189,8 +189,23 @@
 }
 
 .card-back {
-  background: repeating-linear-gradient(45deg, #24425a, #24425a 4px, #1a3245 4px, #1a3245 8px);
+  position: relative;
+  background:
+    repeating-linear-gradient(45deg, transparent 0 6px, rgba(212, 175, 55, 0.16) 6px 7px),
+    repeating-linear-gradient(-45deg, transparent 0 6px, rgba(212, 175, 55, 0.16) 6px 7px),
+    linear-gradient(160deg, #1a3f5c, #0c2436);
   border: 1px solid var(--panel-border);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 3px #0c2436,
+    inset 0 0 0 4px rgba(212, 175, 55, 0.55);
+}
+
+.card-back::after {
+  content: '♠';
+  font-size: 18px;
+  color: rgba(212, 175, 55, 0.6);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .decision-area {
