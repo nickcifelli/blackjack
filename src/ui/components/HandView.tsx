@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { CardView, CardBackView } from './CardView';
 import type { Card } from '../../engine/cards';
 import { bucketOf } from '../../engine/cards';
@@ -10,9 +11,20 @@ interface HandViewProps {
   active?: boolean;
   bet?: number;
   status?: string;
+  /** Identifies the current round; changing it forces cards to remount and re-play their deal-in animation. */
+  roundKey?: number;
 }
 
-export function HandView({ cards, hiddenCount = 0, label, active, bet, status }: HandViewProps) {
+// Cards that arrive together (the opening deal) fan in with a slight stagger; capped low so cards
+// that arrive one at a time in real time (hits, dealer draws) don't pick up extra artificial delay.
+const DEAL_STAGGER_MS = 90;
+const MAX_STAGGER_STEPS = 2;
+
+function dealDelay(index: number): CSSProperties {
+  return { animationDelay: `${Math.min(index, MAX_STAGGER_STEPS) * DEAL_STAGGER_MS}ms` };
+}
+
+export function HandView({ cards, hiddenCount = 0, label, active, bet, status, roundKey = 0 }: HandViewProps) {
   const buckets = cards.map((c) => bucketOf(c.rank));
   const value = buckets.length > 0 ? handValue(buckets) : null;
   const showTotal = value && hiddenCount === 0;
@@ -27,10 +39,10 @@ export function HandView({ cards, hiddenCount = 0, label, active, bet, status }:
       )}
       <div className="hand-cards">
         {cards.map((c, i) => (
-          <CardView key={i} card={c} />
+          <CardView key={`${roundKey}-${i}`} card={c} style={dealDelay(i)} />
         ))}
         {Array.from({ length: hiddenCount }).map((_, i) => (
-          <CardBackView key={`hidden-${i}`} />
+          <CardBackView key={`${roundKey}-hidden-${i}`} style={dealDelay(cards.length + i)} />
         ))}
       </div>
       <div className="hand-total">

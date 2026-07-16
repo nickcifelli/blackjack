@@ -38,7 +38,7 @@ function App() {
 
       <ResultsPanel feedback={game.feedback} />
 
-      {game.phase === 'round-over' && (
+      {game.canDealNext && (
         <button type="button" className="btn btn-deal" onClick={game.dealNext}>
           Deal Next Hand
         </button>
