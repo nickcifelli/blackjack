@@ -30,6 +30,7 @@ export type RoundPhase = 'player-turn' | 'round-over';
 
 export interface RoundSummary {
   dealerCards: Card[];
+  dealerBlackjack: boolean;
   results: HandResult[];
 }
 
@@ -279,7 +280,7 @@ export class GameRound {
       return { handId: hand.id, outcome: 'push', evUnits: 0 };
     });
 
-    this.summary = { dealerCards: [...this.dealerCards], results };
+    this.summary = { dealerCards: [...this.dealerCards], dealerBlackjack, results };
     this.phase = 'round-over';
   }
 }

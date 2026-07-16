@@ -11,6 +11,7 @@ interface HandViewProps {
   active?: boolean;
   bet?: number;
   status?: string;
+  statusVariant?: string;
   /** Identifies the current round; changing it forces cards to remount and re-play their deal-in animation. */
   roundKey?: number;
 }
@@ -24,7 +25,16 @@ function dealDelay(index: number): CSSProperties {
   return { animationDelay: `${Math.min(index, MAX_STAGGER_STEPS) * DEAL_STAGGER_MS}ms` };
 }
 
-export function HandView({ cards, hiddenCount = 0, label, active, bet, status, roundKey = 0 }: HandViewProps) {
+export function HandView({
+  cards,
+  hiddenCount = 0,
+  label,
+  active,
+  bet,
+  status,
+  statusVariant,
+  roundKey = 0,
+}: HandViewProps) {
   const buckets = cards.map((c) => bucketOf(c.rank));
   const value = buckets.length > 0 ? handValue(buckets) : null;
   const showTotal = value && hiddenCount === 0;
@@ -45,10 +55,13 @@ export function HandView({ cards, hiddenCount = 0, label, active, bet, status, r
           <CardBackView key={`${roundKey}-hidden-${i}`} style={dealDelay(cards.length + i)} />
         ))}
       </div>
-      <div className="hand-total">
-        {showTotal ? (value.bust ? 'Bust' : `${value.total}${value.soft ? ' (soft)' : ''}`) : ''}
-        {status && <span className="hand-status"> {status}</span>}
-      </div>
+      <div className="hand-total">{showTotal ? (value.bust ? 'Bust' : `${value.total}${value.soft ? ' (soft)' : ''}`) : ''}</div>
+      {status && (
+        // key forces remount each round so the pop animation replays instead of a static swap.
+        <span key={`${roundKey}-status`} className={`hand-status hand-status-${statusVariant}`}>
+          {status}
+        </span>
+      )}
     </div>
   );
 }

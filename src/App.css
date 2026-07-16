@@ -86,8 +86,60 @@
   min-height: 20px;
 }
 
+@keyframes status-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .hand-status {
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  animation: status-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+.hand-status-win {
+  color: var(--win);
+  background: rgba(62, 207, 126, 0.14);
+  border-color: rgba(62, 207, 126, 0.4);
+}
+
+.hand-status-loss {
+  color: var(--loss);
+  background: rgba(229, 83, 75, 0.14);
+  border-color: rgba(229, 83, 75, 0.4);
+}
+
+.hand-status-push {
+  color: var(--text-dim);
+  background: rgba(159, 176, 191, 0.12);
+  border-color: rgba(159, 176, 191, 0.35);
+}
+
+.hand-status-blackjack {
+  color: var(--accent);
+  background: rgba(212, 175, 55, 0.18);
+  border-color: rgba(212, 175, 55, 0.6);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hand-status {
+    animation: none;
+  }
 }
 
 @keyframes card-deal {

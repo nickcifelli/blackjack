@@ -1,6 +1,6 @@
 import { HandView } from './HandView';
 import type { Card } from '../../engine/cards';
-import type { PlayerHand, RoundPhase, RoundSummary } from '../../engine/round';
+import type { HandOutcome, HandResult, PlayerHand, RoundPhase, RoundSummary } from '../../engine/round';
 
 interface TableProps {
   dealerCards: Card[];
@@ -11,13 +11,29 @@ interface TableProps {
   summary: RoundSummary | null;
 }
 
-const OUTCOME_LABELS: Record<string, string> = {
-  win: 'Win',
-  loss: 'Loss',
-  push: 'Push',
-  blackjack: 'Blackjack!',
-  surrender: 'Surrendered',
+/** Maps each outcome to its badge styling variant; blackjack scenarios get their own look. */
+const OUTCOME_VARIANTS: Record<HandOutcome, string> = {
+  win: 'win',
+  loss: 'loss',
+  push: 'push',
+  blackjack: 'blackjack',
+  surrender: 'push',
 };
+
+function outcomeStatus(result: HandResult, dealerBlackjack: boolean): { label: string; variant: string } {
+  switch (result.outcome) {
+    case 'blackjack':
+      return { label: 'Blackjack! You Win', variant: 'blackjack' };
+    case 'win':
+      return { label: 'You Win', variant: 'win' };
+    case 'loss':
+      return { label: dealerBlackjack ? 'Dealer Blackjack — You Lose' : 'You Lose', variant: 'loss' };
+    case 'push':
+      return { label: dealerBlackjack ? 'Push — Both Blackjack' : 'Push', variant: 'push' };
+    case 'surrender':
+      return { label: 'Surrendered', variant: OUTCOME_VARIANTS.surrender };
+  }
+}
 
 export function Table({ dealerCards, dealerHoleRevealed, hands, activeHandIndex, phase, summary }: TableProps) {
   // Changes every new round (each fresh hand gets a new id), so cards animate back in on deal
@@ -31,7 +47,11 @@ export function Table({ dealerCards, dealerHoleRevealed, hands, activeHandIndex,
       <div className="player-hands">
         {hands.map((hand, i) => {
           const result = summary?.results.find((r) => r.handId === hand.id);
-          const status = result ? OUTCOME_LABELS[result.outcome] : hand.surrendered ? 'Surrendered' : undefined;
+          const status = result
+            ? outcomeStatus(result, summary!.dealerBlackjack)
+            : hand.surrendered
+              ? { label: 'Surrendered', variant: 'push' }
+              : undefined;
           return (
             <HandView
               key={hand.id}
@@ -39,7 +59,8 @@ export function Table({ dealerCards, dealerHoleRevealed, hands, activeHandIndex,
               label={hands.length > 1 ? `Hand ${i + 1}` : 'You'}
               active={phase === 'player-turn' && i === activeHandIndex}
               bet={hand.bet}
-              status={status}
+              status={status?.label}
+              statusVariant={status?.variant}
               roundKey={roundKey}
             />
           );
