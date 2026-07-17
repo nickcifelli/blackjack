@@ -1,4 +1,4 @@
-import type { EvaluateDecisionRequest, DecisionResults } from './montecarlo';
+import type { EvaluateDecisionRequest, DecisionResults } from './combinatorial';
 import type { WorkerRequestMessage, WorkerResponseMessage } from './worker';
 
 /** Promise-based wrapper around the simulation Web Worker. */

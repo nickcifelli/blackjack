@@ -4,7 +4,7 @@ import { DEFAULT_RULES, type RuleConfig } from '../../engine/rules';
 import { bucketOf } from '../../engine/cards';
 import type { Action } from '../../engine/actions';
 import { SimulationClient } from '../../simulation/workerClient';
-import { pickBestAction, type DecisionResults } from '../../simulation/montecarlo';
+import { pickBestAction, type DecisionResults } from '../../simulation/combinatorial';
 
 export interface DecisionFeedback {
   action: Action;

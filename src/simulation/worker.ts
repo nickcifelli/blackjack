@@ -1,5 +1,5 @@
 /// <reference lib="webworker" />
-import { evaluateDecision, type EvaluateDecisionRequest, type DecisionResults } from './montecarlo';
+import { evaluateDecision, type EvaluateDecisionRequest, type DecisionResults } from './combinatorial';
 
 export interface WorkerRequestMessage {
   id: number;
