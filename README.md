@@ -1,9 +1,9 @@
 # Blackjack Trainer
 
-A personal practice engine for blackjack. It deals real hands from a
-depleting 6-deck shoe, offers every legal decision, and after you pick,
-reveals — via exact combinatorial analysis against the shoe's actual
-remaining composition — which action was really best, along with EV and
+A personal practice engine for blackjack. It deals hands from a
+depleting 6 deck shoe ane offers every legal decision. After you pick,
+it reveals the exact combinatorial analysis against the shoe's actual
+remaining composition, telling you which action was really best, along with EV and
 Win/Push/Loss% for every option.
 
 ## Rules modeled
@@ -19,8 +19,8 @@ before reshuffle.
 ## How the evaluation works
 
 At each decision point, every legal action (Stand/Hit/Double/Split/Surrender)
-is scored via exact combinatorial analysis — deterministic backward
-induction / dynamic programming over the shoe's *actual* remaining card
+is scored via exact combinatorial analysis. It uses deterministic backward
+induction / dynamic programming over the shoe's actual remaining card
 composition, not a sampled approximation or a static infinite-deck table.
 The composition already accounts for every card revealed to the player so
 far this shoe (their own hands, the dealer's up cards, prior rounds' dealt
@@ -28,22 +28,17 @@ cards), and the dealer's hidden hole card is treated as a probability
 distribution conditioned on the peek having already cleared (no dealer
 blackjack), rather than sampled.
 
-Every *further* decision reachable from here — what to do after this hit,
-how to play out a split hand — is itself solved exactly (the true optimal
+Every further decision reachable from here, i.e., what to do after this hit,
+how to play out a split hand etc., is itself solved exactly (the true optimal
 hit/stand/double/split continuation, recursively), not approximated by a
 fixed strategy table. Splits follow the standard convention used by every
 published combinatorial reference (Wizard of Odds, CVCX, Griffin's *Theory
 of Blackjack*): each new hand is solved exactly against the composition
-right after the split, independent of what the sibling hand actually draws
-— the alternative (threading the literal realized depletion between sibling
-hands and the dealer) matches no published reference and the correlation it
-captures is far below the 5th decimal place of EV. So the displayed EV is
-exact, not an estimate with sampling noise. See
-`src/simulation/combinatorial.ts` for the implementation.
+right after the split, independent of what the sibling hand actually draws.
+See `src/simulation/combinatorial.ts` for the implementation.
 
 The evaluation runs in a Web Worker so the UI never blocks, though in
-practice a full decision resolves in low-single-digit milliseconds — the
-memoized DP has no need for thousands of trials the way sampling did.
+practice a full decision resolves in low-single-digit milliseconds.
 
 ## Project layout
 
