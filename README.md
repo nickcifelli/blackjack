@@ -2,9 +2,9 @@
 
 A personal practice engine for blackjack. It deals real hands from a
 depleting 6-deck shoe, offers every legal decision, and after you pick,
-reveals — via Monte Carlo simulation against the shoe's actual remaining
-composition — which action was really best, along with EV and Win/Push/Loss%
-for every option.
+reveals — via exact combinatorial analysis against the shoe's actual
+remaining composition — which action was really best, along with EV and
+Win/Push/Loss% for every option.
 
 ## Rules modeled
 
@@ -16,34 +16,43 @@ splitting any two 10-value cards is allowed, late surrender allowed only as
 the very first action on an original unsplit two-card hand, ~75% penetration
 before reshuffle.
 
-## How the simulation works
+## How the evaluation works
 
 At each decision point, every legal action (Stand/Hit/Double/Split/Surrender)
-is scored by running thousands of Monte Carlo trials against the shoe's
-*actual* remaining card composition — not a static infinite-deck table. The
-composition already accounts for every card revealed to the player so far
-this shoe (their own hands, the dealer's up cards, prior rounds' dealt
-cards), and the dealer's hidden hole card is sampled fresh each trial,
-conditioned on the peek having already cleared (no dealer blackjack).
+is scored via exact combinatorial analysis — deterministic backward
+induction / dynamic programming over the shoe's *actual* remaining card
+composition, not a sampled approximation or a static infinite-deck table.
+The composition already accounts for every card revealed to the player so
+far this shoe (their own hands, the dealer's up cards, prior rounds' dealt
+cards), and the dealer's hidden hole card is treated as a probability
+distribution conditioned on the peek having already cleared (no dealer
+blackjack), rather than sampled.
 
-Any *further* decisions needed inside a rollout — what to do after this hit,
-how to play out a split hand — use a hardcoded 6-deck/S17 basic-strategy
-table as the continuation policy, rather than another layer of recursive
-simulation. So the displayed EV means "this action now, basic strategy
-forever after," which is extremely close to (but not mathematically
-identical to) fully optimal recursive EV. See `src/simulation/montecarlo.ts`
-for the implementation.
+Every *further* decision reachable from here — what to do after this hit,
+how to play out a split hand — is itself solved exactly (the true optimal
+hit/stand/double/split continuation, recursively), not approximated by a
+fixed strategy table. Splits follow the standard convention used by every
+published combinatorial reference (Wizard of Odds, CVCX, Griffin's *Theory
+of Blackjack*): each new hand is solved exactly against the composition
+right after the split, independent of what the sibling hand actually draws
+— the alternative (threading the literal realized depletion between sibling
+hands and the dealer) matches no published reference and the correlation it
+captures is far below the 5th decimal place of EV. So the displayed EV is
+exact, not an estimate with sampling noise. See
+`src/simulation/combinatorial.ts` for the implementation.
 
-The simulation runs in a Web Worker so the UI never blocks.
+The evaluation runs in a Web Worker so the UI never blocks, though in
+practice a full decision resolves in low-single-digit milliseconds — the
+memoized DP has no need for thousands of trials the way sampling did.
 
 ## Project layout
 
 ```
 src/
   engine/         # cards, hand values, rules, the physical shoe, dealer
-                   # play, basic strategy table, round state machine
-  simulation/      # Monte Carlo core, unknown-pool/peek conditioning,
-                    # Web Worker + main-thread client
+                   # play, round state machine
+  simulation/      # exact combinatorial engine, unknown-pool/peek
+                    # conditioning, Web Worker + main-thread client
   ui/                # React components and the useGame state hook
 ```
 
@@ -52,7 +61,7 @@ src/
 ```sh
 npm install
 npm run dev      # http://localhost:31031
-npm test         # vitest: engine unit tests + Monte Carlo sanity checks
+npm test         # vitest: engine unit tests + exact-EV reference checks
 npx tsc -b       # typecheck
 npm run lint     # oxlint
 ```
