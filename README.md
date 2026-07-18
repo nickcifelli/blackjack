@@ -40,6 +40,26 @@ See `src/simulation/combinatorial.ts` for the implementation.
 The evaluation runs in a Web Worker so the UI never blocks, though in
 practice a full decision resolves in low-single-digit milliseconds.
 
+## Player profiles & stats
+
+Pick a name from the profile switcher in the header (it defaults to
+"Guest" on first launch); switching or creating a profile just changes
+which localStorage bucket subsequent decisions get recorded into, so a
+few people sharing one machine can each keep their own accuracy. It's
+plain browser storage scoped to this origin, nothing more: no accounts,
+no server, no sync across devices or browsers, and it never touches the
+repo.
+
+Beyond the running session accuracy shown in the header, each profile
+keeps a full lifetime record, viewable from the profile switcher's
+"Advanced Stats" panel: total EV given up versus the optimal play (and
+the per-decision average), accuracy broken out by decision type, hand
+type (hard/soft/pair), and dealer upcard, a current/best correct-decision
+streak, the mix of actions actually chosen, and the ten costliest
+individual mistakes ranked by EV lost. See `src/ui/state/profileStore.ts`
+for the storage schema and the pure data transforms, and
+`src/ui/components/AdvancedStatsModal.tsx` for the panel itself.
+
 ## Project layout
 
 ```
@@ -48,7 +68,8 @@ src/
                    # play, round state machine
   simulation/      # exact combinatorial engine, unknown-pool/peek
                     # conditioning, Web Worker + main-thread client
-  ui/                # React components and the useGame state hook
+  ui/                # React components, the useGame state hook, and
+                      # localStorage-backed player profiles/stats
 ```
 
 ## Development
