@@ -1,9 +1,11 @@
 import { useCallback, useMemo, useState } from 'react';
 import {
+  emptyStats,
   loadProfileData,
   saveProfileData,
   withActiveProfile,
   withRecordedDecision,
+  type DecisionRecord,
   type ProfileData,
   type ProfileStats,
 } from './profileStore';
@@ -28,17 +30,17 @@ export function useProfile() {
     });
   }, []);
 
-  const recordDecision = useCallback((correct: boolean) => {
+  const recordDecision = useCallback((record: DecisionRecord) => {
     setData((prev) => {
       if (!prev.activeProfile) return prev;
-      const next = withRecordedDecision(prev, prev.activeProfile, correct);
+      const next = withRecordedDecision(prev, prev.activeProfile, record);
       saveProfileData(next);
       return next;
     });
   }, []);
 
   const activeProfile = data.activeProfile ?? DEFAULT_PROFILE_NAME;
-  const stats: ProfileStats = data.profiles[activeProfile] ?? { correct: 0, total: 0 };
+  const stats: ProfileStats = data.profiles[activeProfile] ?? emptyStats();
   const profiles = useMemo(() => Object.keys(data.profiles).sort((a, b) => a.localeCompare(b)), [data.profiles]);
 
   return { activeProfile, profiles, stats, switchProfile, recordDecision };

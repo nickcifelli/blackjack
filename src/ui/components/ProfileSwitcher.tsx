@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import type { ProfileStats } from '../state/profileStore';
+import { accuracyPct, type ProfileStats } from '../state/profileStore';
+import { AdvancedStatsModal } from './AdvancedStatsModal';
 
 interface ProfileSwitcherProps {
   activeProfile: string;
@@ -11,6 +12,7 @@ interface ProfileSwitcherProps {
 export function ProfileSwitcher({ activeProfile, profiles, stats, onSwitch }: ProfileSwitcherProps) {
   const [open, setOpen] = useState(false);
   const [newName, setNewName] = useState('');
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -24,7 +26,7 @@ export function ProfileSwitcher({ activeProfile, profiles, stats, onSwitch }: Pr
     return () => document.removeEventListener('mousedown', handlePointerDown);
   }, [open]);
 
-  const pct = stats.total > 0 ? (stats.correct / stats.total) * 100 : 0;
+  const pct = accuracyPct(stats.overall);
 
   const addProfile = () => {
     const trimmed = newName.trim();
@@ -38,7 +40,9 @@ export function ProfileSwitcher({ activeProfile, profiles, stats, onSwitch }: Pr
       <button type="button" className="btn-profile" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         <span className="profile-name">{activeProfile}</span>
         <span className="profile-accuracy">
-          {stats.total > 0 ? `${pct.toFixed(0)}% lifetime (${stats.correct}/${stats.total})` : 'no history yet'}
+          {stats.overall.total > 0
+            ? `${pct.toFixed(0)}% lifetime (${stats.overall.correct}/${stats.overall.total})`
+            : 'no history yet'}
         </span>
       </button>
 
@@ -77,7 +81,21 @@ export function ProfileSwitcher({ activeProfile, profiles, stats, onSwitch }: Pr
               Add
             </button>
           </form>
+          <button
+            type="button"
+            className="profile-advanced-link"
+            onClick={() => {
+              setShowAdvanced(true);
+              setOpen(false);
+            }}
+          >
+            View advanced stats →
+          </button>
         </div>
+      )}
+
+      {showAdvanced && (
+        <AdvancedStatsModal profileName={activeProfile} stats={stats} onClose={() => setShowAdvanced(false)} />
       )}
     </div>
   );

@@ -2,9 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { GameRound, bucketsOf } from '../../engine/round';
 import { DEFAULT_RULES, type RuleConfig } from '../../engine/rules';
 import { bucketOf } from '../../engine/cards';
+import { handValue, isPair } from '../../engine/hand';
 import type { Action } from '../../engine/actions';
 import { SimulationClient } from '../../simulation/workerClient';
 import { pickBestAction, type DecisionResults } from '../../simulation/combinatorial';
+import type { DecisionRecord, HandCategory } from './profileStore';
 
 export interface DecisionFeedback {
   action: Action;
@@ -21,7 +23,7 @@ function useForceUpdate() {
 /** Real-time gap between the dealer's hole card flip and each subsequent hit, so the reveal doesn't snap in instantly. */
 const DEALER_REVEAL_INTERVAL_MS = 900;
 
-export function useGame(rules: RuleConfig = DEFAULT_RULES, onDecision?: (correct: boolean) => void) {
+export function useGame(rules: RuleConfig = DEFAULT_RULES, onDecision?: (record: DecisionRecord) => void) {
   const roundRef = useRef<GameRound | null>(null);
   const simRef = useRef<SimulationClient | null>(null);
   const evalTokenRef = useRef(0);
@@ -171,7 +173,19 @@ export function useGame(rules: RuleConfig = DEFAULT_RULES, onDecision?: (correct
       const correct = action === bestAction;
       setFeedback({ action, results: pendingResults, bestAction, correct });
       setSessionStats((s) => ({ correct: s.correct + (correct ? 1 : 0), total: s.total + 1 }));
-      onDecision?.(correct);
+
+      const playerCards = bucketsOf(round.hands[round.activeHandIndex]);
+      const handCategory: HandCategory = isPair(playerCards) ? 'pair' : handValue(playerCards).soft ? 'soft' : 'hard';
+      onDecision?.({
+        action,
+        bestAction,
+        correct,
+        evLost: pendingResults[bestAction]!.ev - pendingResults[action]!.ev,
+        handCategory,
+        playerCards,
+        dealerUpcard: bucketOf(round.dealerUpCard.rank),
+        timestamp: Date.now(),
+      });
 
       round.applyAction(action);
       forceUpdate();
