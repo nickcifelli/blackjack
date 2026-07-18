@@ -21,7 +21,7 @@ function useForceUpdate() {
 /** Real-time gap between the dealer's hole card flip and each subsequent hit, so the reveal doesn't snap in instantly. */
 const DEALER_REVEAL_INTERVAL_MS = 900;
 
-export function useGame(rules: RuleConfig = DEFAULT_RULES) {
+export function useGame(rules: RuleConfig = DEFAULT_RULES, onDecision?: (correct: boolean) => void) {
   const roundRef = useRef<GameRound | null>(null);
   const simRef = useRef<SimulationClient | null>(null);
   const evalTokenRef = useRef(0);
@@ -168,8 +168,10 @@ export function useGame(rules: RuleConfig = DEFAULT_RULES) {
     (action: Action) => {
       if (!pendingResults) return;
       const bestAction = pickBestAction(pendingResults);
-      setFeedback({ action, results: pendingResults, bestAction, correct: action === bestAction });
-      setSessionStats((s) => ({ correct: s.correct + (action === bestAction ? 1 : 0), total: s.total + 1 }));
+      const correct = action === bestAction;
+      setFeedback({ action, results: pendingResults, bestAction, correct });
+      setSessionStats((s) => ({ correct: s.correct + (correct ? 1 : 0), total: s.total + 1 }));
+      onDecision?.(correct);
 
       round.applyAction(action);
       forceUpdate();
@@ -181,7 +183,7 @@ export function useGame(rules: RuleConfig = DEFAULT_RULES) {
         revealDealerCardsProgressively(1, round.dealerCards.length);
       }
     },
-    [round, pendingResults, forceUpdate, startEvaluationForCurrentDecision, revealDealerCardsProgressively],
+    [round, pendingResults, forceUpdate, startEvaluationForCurrentDecision, revealDealerCardsProgressively, onDecision],
   );
 
   const dealerCardsVisible = round.dealerCards.slice(0, dealerRevealCount);

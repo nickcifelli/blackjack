@@ -1,19 +1,28 @@
 import { useGame } from './ui/state/useGame';
+import { useProfile } from './ui/state/useProfile';
 import { Table } from './ui/components/Table';
 import { DecisionButtons } from './ui/components/DecisionButtons';
 import { ResultsPanel } from './ui/components/ResultsPanel';
 import { SessionStats } from './ui/components/SessionStats';
 import { SettingsPanel } from './ui/components/SettingsPanel';
+import { ProfileSwitcher } from './ui/components/ProfileSwitcher';
 import './App.css';
 
 function App() {
-  const game = useGame();
+  const profile = useProfile();
+  const game = useGame(undefined, profile.recordDecision);
 
   return (
     <div className="app">
       <header className="app-header">
         <h1>Blackjack Trainer</h1>
         <div className="app-header-right">
+          <ProfileSwitcher
+            activeProfile={profile.activeProfile}
+            profiles={profile.profiles}
+            stats={profile.stats}
+            onSwitch={profile.switchProfile}
+          />
           <SessionStats correct={game.sessionStats.correct} total={game.sessionStats.total} />
           <button type="button" className="btn btn-new-shoe" onClick={game.newShoe}>
             New Shoe
