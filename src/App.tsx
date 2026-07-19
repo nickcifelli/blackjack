@@ -14,10 +14,14 @@ function App() {
   const game = useGame(undefined, profile.recordDecision);
   const [showCount, setShowCount] = useState(false);
 
+  const shoeDealtPct = game.shoeTotal > 0 ? ((game.shoeTotal - game.shoeRemaining) / game.shoeTotal) * 100 : 0;
+
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Blackjack Trainer</h1>
+        <div className="app-title">
+          <h1>Blackjack Trainer</h1>
+        </div>
         <div className="app-header-right">
           <ProfileSwitcher
             activeProfile={profile.activeProfile}
@@ -26,23 +30,37 @@ function App() {
             onSwitch={profile.switchProfile}
           />
           <SessionStats correct={game.sessionStats.correct} total={game.sessionStats.total} />
-          <button
-            type="button"
-            className="btn btn-check-count"
-            onClick={() => setShowCount((v) => !v)}
-          >
-            {showCount ? 'Hide Count' : 'Check Count'}
-          </button>
-          <button
-            type="button"
-            className="btn btn-new-shoe"
-            onClick={() => {
-              game.newShoe();
-              setShowCount(false);
-            }}
-          >
-            New Shoe
-          </button>
+
+          <span className="toolbar-divider" aria-hidden="true" />
+
+          <div className="toolbar-group">
+            <button
+              type="button"
+              className={`btn btn-icon btn-check-count${showCount ? ' btn-check-count-active' : ''}`}
+              aria-pressed={showCount}
+              onClick={() => setShowCount((v) => !v)}
+            >
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              {showCount ? 'Hide Count' : 'Check Count'}
+            </button>
+            <button
+              type="button"
+              className="btn btn-icon btn-new-shoe"
+              onClick={() => {
+                game.newShoe();
+                setShowCount(false);
+              }}
+            >
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 12a9 9 0 0 1 15.3-6.4L21 8M21 3v5h-5M21 12a9 9 0 0 1-15.3 6.4L3 16M3 21v-5h5" />
+              </svg>
+              New Shoe
+            </button>
+          </div>
+
           <SettingsPanel
             dealerStandsSoft17={game.dealerStandsSoft17}
             onDealerStandsSoft17Change={game.setDealerStandsSoft17}
@@ -78,15 +96,29 @@ function App() {
         </button>
       )}
 
-      <div className="shoe-info">
-        Shoe: {game.shoeRemaining}/{game.shoeTotal} cards remaining · {game.cardsUntilCutCard} until cut card
-      </div>
-
-      {showCount && (
-        <div className="count-reveal">
-          Running count: <strong>{game.runningCount}</strong> · True count: <strong>{game.trueCount.toFixed(1)}</strong>
+      <div className="shoe-panel">
+        <div className="shoe-info">
+          <span>
+            Shoe: {game.shoeRemaining}/{game.shoeTotal} cards remaining
+          </span>
+          <span className="shoe-info-sep">·</span>
+          <span>{game.cardsUntilCutCard} until cut card</span>
         </div>
-      )}
+        <div className="shoe-progress-track">
+          <div className="shoe-progress-fill" style={{ width: `${shoeDealtPct}%` }} />
+        </div>
+
+        {showCount && (
+          <div className="count-reveal">
+            <span className="count-chip">
+              Running <strong>{game.runningCount >= 0 ? `+${game.runningCount}` : game.runningCount}</strong>
+            </span>
+            <span className="count-chip">
+              True <strong>{game.trueCount >= 0 ? `+${game.trueCount.toFixed(1)}` : game.trueCount.toFixed(1)}</strong>
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

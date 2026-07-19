@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import type { BucketKey } from '../../engine/cards';
 import { ACTION_LABELS, type Action } from '../../engine/actions';
 import {
@@ -79,7 +80,7 @@ export function AdvancedStatsModal({ profileName, stats, onClose }: AdvancedStat
 
   const chosenTotal = ACTIONS_IN_ORDER.reduce((sum, a) => sum + (stats.actionChosenCounts[a] ?? 0), 0);
 
-  return (
+  return createPortal(
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
@@ -185,6 +186,7 @@ export function AdvancedStatsModal({ profileName, stats, onClose }: AdvancedStat
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

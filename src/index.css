@@ -1,19 +1,30 @@
 :root {
-  --felt: #0b3d2e;
-  --felt-dark: #062920;
-  --panel: #12283b;
+  --felt: #0e4433;
+  --felt-dark: #05130f;
+  --panel: #142b3d;
   --panel-border: #24425a;
-  --text: #e9edf2;
-  --text-dim: #9fb0bf;
+  --panel-border-soft: rgba(159, 176, 191, 0.16);
+  --text: #eef2f6;
+  --text-dim: #93a5b8;
   --accent: #d4af37;
+  --accent-bright: #f0cb5c;
+  --accent-ink: #1c1404;
   --win: #3ecf7e;
   --loss: #e5534b;
   --push: #d4af37;
 
+  --radius-sm: 7px;
+  --radius-md: 11px;
+  --radius-lg: 18px;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 20px 56px rgba(0, 0, 0, 0.55);
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
   color-scheme: dark;
   color: var(--text);
   background: var(--felt-dark);
-  font: 16px/1.45 system-ui, 'Segoe UI', Roboto, sans-serif;
+  font: 16px/1.45 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -24,9 +35,19 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+}
+
 body {
   margin: 0;
-  min-height: 100svh;
+  height: 100svh;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 900px 500px at 50% -10%, rgba(212, 175, 55, 0.08), transparent 60%),
+    var(--felt-dark);
 }
 
 h1,
@@ -37,4 +58,13 @@ h2 {
 
 button {
   font: inherit;
+}
+
+::selection {
+  background: rgba(212, 175, 55, 0.35);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
