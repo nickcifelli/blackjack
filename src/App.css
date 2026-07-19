@@ -31,7 +31,8 @@
   gap: 14px;
 }
 
-.btn-new-shoe {
+.btn-new-shoe,
+.btn-check-count {
   padding: 6px 12px;
   font-size: 13px;
 }
@@ -704,5 +705,11 @@
 .shoe-info {
   text-align: center;
   color: var(--text-dim);
+  font-size: 13px;
+}
+
+.count-reveal {
+  text-align: center;
+  color: var(--accent);
   font-size: 13px;
 }

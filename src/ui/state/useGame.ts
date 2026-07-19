@@ -215,6 +215,8 @@ export function useGame(rules: RuleConfig = DEFAULT_RULES, onDecision?: (record:
     shoeRemaining: round.shoe.remainingCount(),
     shoeTotal: round.shoe.totalSize(),
     cardsUntilCutCard: round.shoe.cardsUntilCutCard(),
+    runningCount: round.shoe.runningCount(),
+    trueCount: round.shoe.trueCount(),
     evaluating,
     canChoose: pendingResults !== null,
     feedback,

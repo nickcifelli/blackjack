@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useGame } from './ui/state/useGame';
 import { useProfile } from './ui/state/useProfile';
 import { Table } from './ui/components/Table';
@@ -11,6 +12,7 @@ import './App.css';
 function App() {
   const profile = useProfile();
   const game = useGame(undefined, profile.recordDecision);
+  const [showCount, setShowCount] = useState(false);
 
   return (
     <div className="app">
@@ -24,7 +26,21 @@ function App() {
             onSwitch={profile.switchProfile}
           />
           <SessionStats correct={game.sessionStats.correct} total={game.sessionStats.total} />
-          <button type="button" className="btn btn-new-shoe" onClick={game.newShoe}>
+          <button
+            type="button"
+            className="btn btn-check-count"
+            onClick={() => setShowCount((v) => !v)}
+          >
+            {showCount ? 'Hide Count' : 'Check Count'}
+          </button>
+          <button
+            type="button"
+            className="btn btn-new-shoe"
+            onClick={() => {
+              game.newShoe();
+              setShowCount(false);
+            }}
+          >
             New Shoe
           </button>
           <SettingsPanel
@@ -65,6 +81,12 @@ function App() {
       <div className="shoe-info">
         Shoe: {game.shoeRemaining}/{game.shoeTotal} cards remaining · {game.cardsUntilCutCard} until cut card
       </div>
+
+      {showCount && (
+        <div className="count-reveal">
+          Running count: <strong>{game.runningCount}</strong> · True count: <strong>{game.trueCount.toFixed(1)}</strong>
+        </div>
+      )}
     </div>
   );
 }

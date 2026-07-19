@@ -27,6 +27,13 @@ export function bucketValue(bucket: BucketKey): number {
   return Number(bucket);
 }
 
+/** Hi-Lo card-counting tag: +1 for low cards, 0 for neutral, -1 for tens/aces. */
+export function hiLoTag(bucket: BucketKey): number {
+  if (bucket === 'T' || bucket === 'A') return -1;
+  if (bucket === '7' || bucket === '8' || bucket === '9') return 0;
+  return 1;
+}
+
 export type Composition = Record<BucketKey, number>;
 
 export function freshComposition(decks: number): Composition {

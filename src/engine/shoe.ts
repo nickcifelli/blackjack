@@ -7,6 +7,7 @@ import {
   BUCKET_KEYS,
   bucketOf,
   freshComposition,
+  hiLoTag,
   zeroComposition,
 } from './cards';
 import type { RuleConfig } from './rules';
@@ -90,5 +91,16 @@ export class Shoe {
     const result = {} as Composition;
     for (const b of BUCKET_KEYS) result[b] = fresh[b] - this.revealed[b];
     return result;
+  }
+
+  /** Hi-Lo running count of every card revealed so far this shoe. */
+  runningCount(): number {
+    return BUCKET_KEYS.reduce((sum, b) => sum + this.revealed[b] * hiLoTag(b), 0);
+  }
+
+  /** Running count normalized by decks remaining, the standard Hi-Lo betting signal. */
+  trueCount(): number {
+    const decksRemaining = Math.max(this.remainingCount() / 52, 1 / this.rules.decks);
+    return this.runningCount() / decksRemaining;
   }
 }
