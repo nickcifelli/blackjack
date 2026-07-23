@@ -81,20 +81,22 @@ function App() {
         summary={game.summary}
       />
 
-      {game.phase === 'player-turn' && (
-        <div className="decision-area">
-          <DecisionButtons legalActions={game.legalActions} disabled={!game.canChoose} onChoose={game.choose} />
-          {game.evaluating && <div className="evaluating">Calculating optimal play…</div>}
-        </div>
-      )}
+      <div className="outcome-zone">
+        {game.phase === 'player-turn' && (
+          <div className="decision-area">
+            <DecisionButtons legalActions={game.legalActions} disabled={!game.canChoose} onChoose={game.choose} />
+            {game.evaluating && <div className="evaluating">Calculating optimal play…</div>}
+          </div>
+        )}
 
-      <ResultsPanel feedback={game.feedback} />
+        <ResultsPanel feedback={game.feedback} />
 
-      {game.canDealNext && (
-        <button type="button" className="btn btn-deal" onClick={game.dealNext}>
-          Deal Next Hand
-        </button>
-      )}
+        {game.canDealNext && (
+          <button type="button" className="btn btn-deal" onClick={game.dealNext}>
+            Deal Next Hand
+          </button>
+        )}
+      </div>
 
       <div className="shoe-panel">
         <div className="shoe-info">
